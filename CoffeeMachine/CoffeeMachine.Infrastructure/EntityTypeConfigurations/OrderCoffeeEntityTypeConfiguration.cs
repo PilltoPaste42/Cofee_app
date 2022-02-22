@@ -5,15 +5,16 @@ using CoffeeMachine.Core.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-// Класс для конфигурации таблицы OrderCoffee 
+/// <summary>
+///     Конфигурация таблицы OrderCoffee 
+/// </summary>
 public class OrderCoffeeEntityTypeConfiguration : IEntityTypeConfiguration<OrderCoffee>
 {
+    /// <inheritdoc cref="IEntityTypeConfiguration{TEntity}.Configure"/>
     public void Configure(EntityTypeBuilder<OrderCoffee> builder)
     {
-        // Обозначение составного ключа таблицы
         builder.HasKey(b => new { b.CoffeeId, b.OrderId });
 
-        // Обозначение двух связей О-М, которые эквивалентны связи М-М 
         builder
             .HasOne(p => p.Coffee)
             .WithMany(d => d.OrderCoffee)

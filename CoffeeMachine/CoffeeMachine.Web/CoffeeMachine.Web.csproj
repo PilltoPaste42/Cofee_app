@@ -21,12 +21,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CoffeeMachine.Core\CoffeeMachine.Core.csproj" />
-    <ProjectReference Include="..\CoffeeMachine.Infrastructure\CoffeeMachine.Infrastructure.csproj" />
+    <Folder Include="Controllers\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
+    <ProjectReference Include="..\CoffeeMachine.Infrastructure\CoffeeMachine.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

@@ -2,15 +2,26 @@
 {
     using System.ComponentModel.DataAnnotations;
 
-    // Модель таблицы которая хранит позиции меню в кофейном аппарате
+    /// <summary>
+    ///     Модель таблицы кофе
+    /// </summary>
     public class Coffee : BaseEntity
     {
+        /// <summary>
+        ///     Наименование
+        /// </summary>
         [Required]
         public string Name { get; set; }
 
+        /// <summary>
+        ///     Навигационное свойство для связи с Order
+        /// </summary>
+        public List<OrderCoffee> OrderCoffee { get; set; }
+
+        /// <summary>
+        ///     Цена напитка
+        /// </summary>
         [Required]
         public uint Price { get; set; }
-
-        public  List<OrderCoffee> OrderCoffee { get; set; } // Навигационное свойство для связи с Order
     }
 }

@@ -1,9 +1,15 @@
 ﻿namespace CoffeeMachine.Core.Models;
 
 using System.ComponentModel.DataAnnotations;
-// Шаблон для создания моделей таблиц
+
+/// <summary>
+///     Базовый класс для реализации моделей таблиц
+/// </summary>
 public abstract class BaseEntity
 {
+    /// <summary>
+    ///     Идентификатор записи
+    /// </summary>
     [Key]
-    public int Id { get; set; } // Ключевое поле (PK)
+    public int Id { get; set; }
 }
