@@ -1,6 +1,10 @@
+using System.Data.Entity.Core;
+
 using CoffeeMachine.Infrastructure;
 using CoffeeMachine.Infrastructure.Data;
+using CoffeeMachine.Infrastructure.Extensions;
 
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +17,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddUnitOfWorkAndRepositories();
 
 var app = builder.Build();
 
@@ -27,6 +32,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseAppExceptionHandler();
 
 app.MapControllers();
 
