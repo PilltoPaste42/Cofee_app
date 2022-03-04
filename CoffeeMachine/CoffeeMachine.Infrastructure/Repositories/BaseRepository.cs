@@ -1,7 +1,6 @@
 ﻿namespace CoffeeMachine.Infrastructure.Repositories;
 
-using System.Data.Entity.Core;
-
+using CoffeeMachine.Core.Exceptions;
 using CoffeeMachine.Core.Interfaces.Repositories;
 
 using Microsoft.EntityFrameworkCore;
