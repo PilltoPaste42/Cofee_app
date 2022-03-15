@@ -28,6 +28,20 @@ public class MachineBanknoteRepository : BaseRepository<MachineBanknote>, IMachi
 
     public async Task CreateRangeAsync(IEnumerable<MachineBanknote> banknotes)
     {
+        var duplicateDenominations = string.Empty;
+        foreach (var banknote in banknotes)
+        {
+            if (await _machineBanknote.AnyAsync(p => p.Denomination == banknote.Denomination))
+                duplicateDenominations += banknote.Denomination + ", ";
+        }
+
+        if (duplicateDenominations.Length > 0)
+        {
+            duplicateDenominations = duplicateDenominations.Trim(' ', ',');
+            throw new ObjectAlreadyExistsException("Ошибка при добавлении множества банкнот. " +
+                                                   $"Банкнота(ы) с номиналом {duplicateDenominations} уже существуют");
+        }
+        
         await _machineBanknote.AddRangeAsync(banknotes);
     }
 

@@ -16,6 +16,7 @@ public static class ServicesExtensions
     public static IServiceCollection AddServices(this IServiceCollection services)
     {
         services.AddScoped<ICoffeeService, CoffeeService>();
+        services.AddScoped<IMachineBanknoteService, MachineBanknoteService>();
         
         return services;
     }

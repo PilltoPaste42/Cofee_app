@@ -3,6 +3,7 @@
 using CoffeeMachine.Core.Exceptions;
 
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 /// <summary>
@@ -38,12 +39,24 @@ public class ExceptionHandlerMiddleware
         catch (ObjectNotFoundException e)
         {
             _logger.LogError(e, e.Message);
+
+            context.Response.ContentType = "text/plain";
             context.Response.StatusCode = StatusCodes.Status404NotFound;
+            await context.Response.WriteAsync(e.Message);
+        }
+        catch (ObjectAlreadyExistsException e)
+        {
+            _logger.LogError(e, e.Message);
+
+            context.Response.ContentType = "text/plain";
+            context.Response.StatusCode = StatusCodes.Status400BadRequest;
             await context.Response.WriteAsync(e.Message);
         }
         catch (Exception e)
         {
             _logger.LogError(e, e.Message);
+
+            context.Response.ContentType = "text/plain";
             context.Response.StatusCode = StatusCodes.Status500InternalServerError;
             await context.Response.WriteAsync("Неизвестная ошибка на стороне сервера");
         }
