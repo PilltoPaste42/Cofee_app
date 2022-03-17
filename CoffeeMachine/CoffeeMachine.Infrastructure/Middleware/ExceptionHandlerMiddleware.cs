@@ -1,9 +1,10 @@
 ﻿namespace CoffeeMachine.Infrastructure.Middleware;
 
+using System.ComponentModel.DataAnnotations;
+
 using CoffeeMachine.Core.Exceptions;
 
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 /// <summary>
@@ -39,26 +40,34 @@ public class ExceptionHandlerMiddleware
         catch (ObjectNotFoundException e)
         {
             _logger.LogError(e, e.Message);
-
-            context.Response.ContentType = "text/plain";
-            context.Response.StatusCode = StatusCodes.Status404NotFound;
-            await context.Response.WriteAsync(e.Message);
+            await SetExceptionResponse(context, StatusCodes.Status404NotFound, e.Message);
         }
         catch (ObjectAlreadyExistsException e)
         {
             _logger.LogError(e, e.Message);
-
-            context.Response.ContentType = "text/plain";
-            context.Response.StatusCode = StatusCodes.Status400BadRequest;
-            await context.Response.WriteAsync(e.Message);
+            await SetExceptionResponse(context, StatusCodes.Status400BadRequest, e.Message);
+        }
+        catch (ValidationException e)
+        {
+            _logger.LogError(e, e.Message);
+            await SetExceptionResponse(context, StatusCodes.Status400BadRequest, e.Message);
         }
         catch (Exception e)
         {
             _logger.LogError(e, e.Message);
-
-            context.Response.ContentType = "text/plain";
-            context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-            await context.Response.WriteAsync("Неизвестная ошибка на стороне сервера");
+            await SetExceptionResponse(context, 
+                StatusCodes.Status500InternalServerError,
+                "Неизвестная ошибка на стороне сервера");
         }
+    }
+
+    /// <summary>
+    ///     Настройка ответа на исключение
+    /// </summary>
+    private static async Task SetExceptionResponse(HttpContext context, int statusCode, string message)
+    {
+        context.Response.ContentType = "text/plain";
+        context.Response.StatusCode = statusCode;
+        await context.Response.WriteAsync(message);
     }
 }

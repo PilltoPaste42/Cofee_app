@@ -17,6 +17,7 @@ public static class ServicesExtensions
     {
         services.AddScoped<ICoffeeService, CoffeeService>();
         services.AddScoped<IMachineBanknoteService, MachineBanknoteService>();
+        services.AddScoped<IOrderService, OrderService>();
         
         return services;
     }

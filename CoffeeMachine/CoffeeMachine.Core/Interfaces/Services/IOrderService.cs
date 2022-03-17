@@ -5,24 +5,17 @@ using CoffeeMachine.Core.Dto;
 /// <summary>
 ///     Сервис для работы с таблицами Order и OrderCoffee
 /// </summary>
-public interface IOrderService : IBaseService<OrderDto>
+public interface IOrderService
 {
     /// <summary>
-    ///     Добавление кофе в заказ
+    ///     Создание заказа
     /// </summary>
-    /// <param name="orderId"> Идентификатор заказа </param>
-    /// <param name="coffeeId"> Идентификатор кофе </param>
-    /// <param name="count"> Количество кофе </param>
-    Task AddCoffeeInOrderAsync(int orderId, int coffeeId, int count);
+    /// <param name="orderCreateDto"> DTO заказа </param>
+    /// <returns> Сдача с оплаты заказа в виде списка банкнот </returns>
+    Task<IEnumerable<MachineBanknoteDto>> CreateOrderAsync(OrderCreateDto orderCreateDto);
 
-    /// <summary> Удаление кофе из заказа </summary>
-    /// <param name="orderId"> Идентификатор заказа </param>
-    /// <param name="coffeeId"> Идентификатор кофе </param>
-    Task DeleteCoffeeFromOrderAsync(int orderId, int coffeeId);
-
-    /// <summary> Обновление количества кофе в заказе </summary>
-    /// <param name="orderId"> Идентификатор заказа </param>
-    /// <param name="coffeeId"> Идентификатор кофе </param>
-    /// <param name="count"> Новое количество кофе </param>
-    Task UpdateCoffeeCountAsync(int orderId, int coffeeId, int count);
+    /// <summary>
+    ///     Получение всех заказов
+    /// </summary>
+    Task<IEnumerable<OrderReadDto>> GetOrdersAsync();
 }

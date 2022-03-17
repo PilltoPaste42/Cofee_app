@@ -13,12 +13,13 @@ public class MappingProfile : Profile
     public MappingProfile()
     {
         CreateMap<CoffeeDto, Coffee>()
-            .ForMember(s => s.Id, param => param.Ignore())
+            .ForMember(m => m.Id, param => param.Ignore())
             .ReverseMap();
         CreateMap<MachineBanknoteDto, MachineBanknote>()
-            .ReverseMap(); 
-        CreateMap<OrderDto, Order>()
-            .ForMember(s => s.Id, param => param.Ignore())
             .ReverseMap();
+        CreateMap<OrderCoffee, OrderCoffeeDto>()
+            .ReverseMap();
+        CreateMap<Order, OrderReadDto>()
+            .ForMember(x => x.CoffeeList, param => param.MapFrom(o => o.OrderCoffee));
     }
 }
