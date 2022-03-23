@@ -7,5 +7,4 @@ using CoffeeMachine.Core.Dto;
 /// </summary>
 public interface ICoffeeService : IBaseService<CoffeeDto>
 {
-    
 }

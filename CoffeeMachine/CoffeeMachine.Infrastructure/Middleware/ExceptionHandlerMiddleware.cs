@@ -40,22 +40,22 @@ public class ExceptionHandlerMiddleware
         catch (ObjectNotFoundException e)
         {
             _logger.LogError(e, e.Message);
-            await SetExceptionResponse(context, StatusCodes.Status404NotFound, e.Message);
+            await HandleException(context, StatusCodes.Status404NotFound, e.Message);
         }
         catch (ObjectAlreadyExistsException e)
         {
             _logger.LogError(e, e.Message);
-            await SetExceptionResponse(context, StatusCodes.Status400BadRequest, e.Message);
+            await HandleException(context, StatusCodes.Status400BadRequest, e.Message);
         }
         catch (ValidationException e)
         {
             _logger.LogError(e, e.Message);
-            await SetExceptionResponse(context, StatusCodes.Status400BadRequest, e.Message);
+            await HandleException(context, StatusCodes.Status400BadRequest, e.Message);
         }
         catch (Exception e)
         {
             _logger.LogError(e, e.Message);
-            await SetExceptionResponse(context, 
+            await HandleException(context,
                 StatusCodes.Status500InternalServerError,
                 "Неизвестная ошибка на стороне сервера");
         }
@@ -64,7 +64,7 @@ public class ExceptionHandlerMiddleware
     /// <summary>
     ///     Настройка ответа на исключение
     /// </summary>
-    private static async Task SetExceptionResponse(HttpContext context, int statusCode, string message)
+    private static async Task HandleException(HttpContext context, int statusCode, string message)
     {
         context.Response.ContentType = "text/plain";
         context.Response.StatusCode = statusCode;

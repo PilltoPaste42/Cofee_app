@@ -13,15 +13,15 @@ public class OrderCoffeeEntityTypeConfiguration : IEntityTypeConfiguration<Order
     /// <inheritdoc cref="IEntityTypeConfiguration{TEntity}.Configure"/>
     public void Configure(EntityTypeBuilder<OrderCoffee> builder)
     {
-        builder.HasKey(b => new { b.CoffeeId, b.OrderId });
+        builder.HasKey(orderCoffee => new { orderCoffee.CoffeeId, orderCoffee.OrderId });
 
         builder
-            .HasOne(p => p.Coffee)
-            .WithMany(d => d.OrderCoffee)
-            .HasForeignKey(c => c.CoffeeId);
+            .HasOne(orderCoffee => orderCoffee.Coffee)
+            .WithMany(coffee => coffee.OrderCoffee)
+            .HasForeignKey(orderCoffee => orderCoffee.CoffeeId);
         builder
-            .HasOne(p => p.Order)
-            .WithMany(d => d.OrderCoffee)
-            .HasForeignKey(c => c.OrderId);
+            .HasOne(orderCoffee => orderCoffee.Order)
+            .WithMany(order => order.OrderCoffee)
+            .HasForeignKey(orderCoffee => orderCoffee.OrderId);
     }
 }

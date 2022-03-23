@@ -44,9 +44,9 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T : class
 
     public async Task UpdateAsync(T element)
     {
-        var isElementExist = await _dbSet.AnyAsync(p => p == element);
+        var isElementExist = await _dbSet.AnyAsync(x => x == element);
         if (!isElementExist)
-            throw new ObjectNotFoundException($"Ошибка при обновлении. Запись не найдена");
+            throw new ObjectNotFoundException("Ошибка при обновлении. Запись не найдена");
 
         _dbSet.Update(element);
     }

@@ -36,9 +36,9 @@ public class MachineBanknoteService : IMachineBanknoteService
 
     public async Task<IEnumerable<MachineBanknoteDto>> GetAllAsync()
     {
-        var elements = await _unit.MachineBanknotes.GetAllAsync();
-        var mappedElements = _mapper.Map<IEnumerable<MachineBanknoteDto>>(elements.ToList());
-        
+        var elements = (await _unit.MachineBanknotes.GetAllAsync()).ToList();
+        var mappedElements = _mapper.Map<IEnumerable<MachineBanknoteDto>>(elements);
+
         return mappedElements;
     }
 
@@ -54,9 +54,7 @@ public class MachineBanknoteService : IMachineBanknoteService
     {
         var oldElement = await _unit.MachineBanknotes.GetAsync(element.Denomination);
         if (oldElement == null)
-        {
             throw new ObjectNotFoundException($"Банкнота с номиналом {element.Denomination} не найдена");
-        }
 
         _mapper.Map(element, oldElement);
         await _unit.MachineBanknotes.UpdateAsync(oldElement);

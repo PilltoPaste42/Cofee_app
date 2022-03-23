@@ -20,6 +20,16 @@
         }
 
         /// <summary>
+        ///     Удаление всех банкнот
+        /// </summary>
+        [HttpDelete]
+        public async Task<ActionResult> DeleteAll()
+        {
+            await _service.CleanAsync();
+            return Ok();
+        }
+
+        /// <summary>
         ///     Получение всех банкнот в автомате
         /// </summary>
         [HttpGet]
@@ -35,16 +45,6 @@
         public async Task<ActionResult> PostRange([FromBody] IEnumerable<MachineBanknoteDto> banknotesDto)
         {
             await _service.CreateRangeAsync(banknotesDto);
-            return Ok();
-        }
-
-        /// <summary>
-        ///     Удаление всех банкнот
-        /// </summary>
-        [HttpDelete]
-        public async Task<ActionResult> DeleteAll()
-        {
-            await _service.CleanAsync();
             return Ok();
         }
 

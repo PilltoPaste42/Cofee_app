@@ -8,7 +8,7 @@ public sealed class ObjectAlreadyExistsException : DataException
     {
     }
 
-    public ObjectAlreadyExistsException(string message) 
+    public ObjectAlreadyExistsException(string message)
         : base(message)
     {
     }

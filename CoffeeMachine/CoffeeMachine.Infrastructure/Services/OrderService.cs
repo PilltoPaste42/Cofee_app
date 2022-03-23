@@ -32,35 +32,37 @@ public class OrderService : IOrderService
         };
 
         var coffeeQuery = await _unit.Coffee.GetAllAsync();
-        var coffeeInOrderIdList = orderCreateDto.CoffeeList.Select(x => x.Coffee.Id).ToList();
-        var coffeeInOrderNotExistIdList = coffeeInOrderIdList.Where(x => !coffeeQuery.Any(c => c.Id == x)).ToList();
-        var duplicateCoffeeInOrderIdList = coffeeInOrderIdList.GroupBy(v => v).Where(g => g.Count() > 1).Select(g => g.Key).ToList();
+        var coffeeInOrderIdList = orderCreateDto.CoffeeList.Select(orderCoffeeDto => orderCoffeeDto.Coffee.Id).ToList();
+        var coffeeInOrderNotExistIdList = coffeeInOrderIdList.Where(x => !coffeeQuery.Any(coffee => coffee.Id == x)).ToList();
+        var duplicateCoffeeInOrderIdList =
+            coffeeInOrderIdList.GroupBy(v => v).Where(g => g.Count() > 1).Select(g => g.Key).ToList();
 
         if (coffeeInOrderIdList.Count == 0)
             throw new ObjectNotFoundException("Ошибка при добавлении кофе в заказ. Кофе в заказе не найден");
 
         if (coffeeInOrderNotExistIdList.Count > 0)
         {
-            var coffeeNotExistIdString = string.Join(',', coffeeInOrderNotExistIdList);
+            var coffeeNotExistIdString = string.Join(", ", coffeeInOrderNotExistIdList);
             throw new ObjectNotFoundException("Ошибка при добавлении кофе в заказ. " +
                                               $"Кофе с идентификатором(и) {coffeeNotExistIdString} не найдены");
         }
 
         if (duplicateCoffeeInOrderIdList.Count > 0)
         {
-            var duplicateCoffeeInOrderIdString = string.Join(',', duplicateCoffeeInOrderIdList);
+            var duplicateCoffeeInOrderIdString = string.Join(", ", duplicateCoffeeInOrderIdList);
             throw new ValidationException("Ошибка при добавлении кофе в заказ. " +
-            $"Кофе с идентификатором {duplicateCoffeeInOrderIdString} дублируются");
+                                          $"Кофе с идентификатором {duplicateCoffeeInOrderIdString} дублируются");
         }
 
         order.OrderCoffee = coffeeQuery
-            .Where(p => coffeeInOrderIdList.Contains(p.Id)).ToList()
+            .Where(coffee => coffeeInOrderIdList.Contains(coffee.Id))
+                .ToList()
             .Select(coffee => new OrderCoffee
-                {
-                    Order = order,
-                    Coffee = coffee,
-                    Count = orderCreateDto.CoffeeList.Single(oc => oc.Coffee.Id == coffee.Id).Count
-                })
+            {
+                Order = order,
+                Coffee = coffee,
+                Count = orderCreateDto.CoffeeList.Single(orderCoffeeDto => orderCoffeeDto.Coffee.Id == coffee.Id).Count
+            })
             .ToList();
 
         foreach (var orderCoffee in order.OrderCoffee)
@@ -85,8 +87,8 @@ public class OrderService : IOrderService
     public async Task<IEnumerable<OrderReadDto>> GetOrdersAsync()
     {
         var orders = (await _unit.Orders.GetAllAsync())
-            .Include(x => x.OrderCoffee)
-            .ThenInclude(x => x.Coffee)
+            .Include(order => order.OrderCoffee)
+            .ThenInclude(orderCoffee => orderCoffee.Coffee)
             .ToList();
         var mappedOrders = _mapper.Map<IEnumerable<OrderReadDto>>(orders);
 
@@ -107,7 +109,7 @@ public class OrderService : IOrderService
         var result = new List<MachineBanknoteDto>();
 
         var machineBanknotesList = (await _unit.MachineBanknotes.GetAllAsync())
-            .OrderByDescending(p => p.Denomination).ToList();
+            .OrderByDescending(machineBanknote => machineBanknote.Denomination).ToList();
 
         foreach (var banknote in machineBanknotesList)
         {
@@ -148,19 +150,21 @@ public class OrderService : IOrderService
         var balance = 0;
 
         var machineBanknotesQuery = await _unit.MachineBanknotes.GetAllAsync();
-        var banknoteDenominationsList = machineBanknotesQuery.Select(x => x.Denomination).ToList();
-        var notSupportBanknotesList = banknoteDenominationsList
-            .Where(x => !machineBanknotesQuery.Any(b => b.Denomination == x)).ToList();
+        var banknoteDenominationsList = machineBanknotesQuery.Select(machineBanknote => machineBanknote.Denomination).ToList();
 
-        if (notSupportBanknotesList.Count > 0)
+        var notSupportBanknotesDenominationList = insertBanknotesDto
+            .Where(banknoteDto => !banknoteDenominationsList.Contains(banknoteDto.Denomination))
+            .Select(banknoteDto => banknoteDto.Denomination);
+
+        if (notSupportBanknotesDenominationList.Any())
         {
-            var notSupportBanknotesString = string.Join(',', notSupportBanknotesList);
+            var notSupportBanknotesString = string.Join(", ", notSupportBanknotesDenominationList);
             throw new ValidationException(
                 $"Ошибка при создании заказа. Банкноты с номиналом {notSupportBanknotesString} не поддерживаются");
         }
 
         var insertBanknotesList =
-            machineBanknotesQuery.Where(b => banknoteDenominationsList.Contains(b.Denomination)).ToList();
+            machineBanknotesQuery.Where(machineBanknote => banknoteDenominationsList.Contains(machineBanknote.Denomination)).ToList();
 
 
         foreach (var banknote in insertBanknotesDto)

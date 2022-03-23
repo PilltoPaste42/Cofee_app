@@ -28,39 +28,38 @@ public class MachineBanknoteRepository : BaseRepository<MachineBanknote>, IMachi
 
     public async Task CreateRangeAsync(IEnumerable<MachineBanknote> banknotes)
     {
-        var duplicateDenominations = string.Empty;
-        foreach (var banknote in banknotes)
+        var existDenominationList = banknotes
+            .Where(banknote =>
+                _machineBanknote.Any(machineBanknote => machineBanknote.Denomination == banknote.Denomination))
+            .Select(banknote => banknote.Denomination)
+            .ToList();
+
+        if (existDenominationList.Count > 0)
         {
-            if (await _machineBanknote.AnyAsync(p => p.Denomination == banknote.Denomination))
-                duplicateDenominations += banknote.Denomination + ", ";
+            var existDenominationsString = string.Join(", ", existDenominationList);
+            throw new ObjectAlreadyExistsException("Ошибка при добавлении множества банкнот. " +
+                                              $"Банкнота(ы) с номиналом {existDenominationsString} уже существуют");
         }
 
-        if (duplicateDenominations.Length > 0)
-        {
-            duplicateDenominations = duplicateDenominations.Trim(' ', ',');
-            throw new ObjectAlreadyExistsException("Ошибка при добавлении множества банкнот. " +
-                                                   $"Банкнота(ы) с номиналом {duplicateDenominations} уже существуют");
-        }
-        
         await _machineBanknote.AddRangeAsync(banknotes);
     }
 
-    public async Task UpdateRangeAsync(IEnumerable<MachineBanknote> banknotes)
+    public Task UpdateRangeAsync(IEnumerable<MachineBanknote> banknotes)
     {
-        var notFoundDenominations = string.Empty;
-        foreach (var banknote in banknotes)
+        var notFoundDenominationsList = banknotes
+            .Where(banknote =>
+                !_machineBanknote.Any(machineBanknote => machineBanknote.Denomination == banknote.Denomination))
+            .Select(banknote => banknote.Denomination)
+            .ToList();
+
+        if (notFoundDenominationsList.Count > 0)
         {
-            if (!await _machineBanknote.AnyAsync(p => p.Denomination == banknote.Denomination))
-                notFoundDenominations += banknote.Denomination + ", ";
+            var notFoundDenominationsString = string.Join(", ", notFoundDenominationsList);
+            throw new ObjectNotFoundException("Ошибка при обновлении множества банкнот. " +
+                                              $"Банкнота(ы) с номиналом {notFoundDenominationsString} не найдена");
         }
 
-        if (notFoundDenominations.Length > 0)
-        {
-            notFoundDenominations = notFoundDenominations.Trim(' ', ',');
-            throw new ObjectNotFoundException("Ошибка при обновлении множества банкнот. " +
-                                              $"Банкнота(ы) с номиналом {notFoundDenominations} не найдена");
-        }
-        
         _machineBanknote.UpdateRange(banknotes);
+        return Task.CompletedTask;
     }
 }

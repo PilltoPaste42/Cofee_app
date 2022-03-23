@@ -8,33 +8,33 @@
     public class OrderCoffee
     {
         /// <summary>
-        ///     Идентификатор позиции кофе
-        /// </summary>
-        [Required]
-        public int CoffeeId { get; set; }
-       
-        /// <summary>
         ///     Кофе 
         /// </summary>
         [Required]
         public Coffee Coffee { get; set; }
 
         /// <summary>
-        ///     Идентификатор заказа
+        ///     Идентификатор позиции кофе
         /// </summary>
         [Required]
-        public int OrderId { get; set; }
-        
-        /// <summary>
-        ///     Экземпляр заказа
-        /// </summary>
-        [Required]
-        public Order Order { get; set; }
-        
+        public int CoffeeId { get; set; }
+
         /// <summary>
         ///     Количество позиций кофе
         /// </summary>
         [Required]
         public int Count { get; set; }
+
+        /// <summary>
+        ///     Экземпляр заказа
+        /// </summary>
+        [Required]
+        public Order Order { get; set; }
+
+        /// <summary>
+        ///     Идентификатор заказа
+        /// </summary>
+        [Required]
+        public int OrderId { get; set; }
     }
 }

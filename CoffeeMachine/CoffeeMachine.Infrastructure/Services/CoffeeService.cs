@@ -27,21 +27,20 @@ public class CoffeeService : ICoffeeService
     {
         var mappedElement = _mapper.Map<Coffee>(element);
         await _unit.Coffee.CreateAsync(mappedElement);
-        
+
         await _unit.CommitAsync();
     }
 
     public async Task DeleteAsync(int id)
     {
         await _unit.Coffee.DeleteAsync(id);
-        
         await _unit.CommitAsync();
     }
 
     public async Task<IEnumerable<CoffeeDto>> GetAllAsync()
     {
-        var elements = await _unit.Coffee.GetAllAsync();
-        var mappedElements = _mapper.Map<IEnumerable<CoffeeDto>>(elements.ToList());
+        var elements = (await _unit.Coffee.GetAllAsync()).ToList();
+        var mappedElements = _mapper.Map<IEnumerable<CoffeeDto>>(elements);
 
         return mappedElements;
     }
@@ -60,10 +59,8 @@ public class CoffeeService : ICoffeeService
     {
         var oldElement = await _unit.Coffee.GetAsync(element.Id);
         if (oldElement == null)
-        {
             throw new ObjectNotFoundException($"Кофе с номером {element.Id} не найден");
-        }
-        
+
         _mapper.Map(element, oldElement);
         await _unit.Coffee.UpdateAsync(oldElement);
         await _unit.CommitAsync();

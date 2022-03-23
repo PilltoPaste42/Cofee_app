@@ -8,14 +8,14 @@ using System.ComponentModel.DataAnnotations;
 public class OrderCreateDto
 {
     /// <summary>
-    ///     Список кофе в заказе
-    /// </summary>
-    [Required]
-    public IEnumerable<OrderCoffeeDto> CoffeeList { get; set; }
-    
-    /// <summary>
     ///     Список внесенных банкнот
     /// </summary>
     [Required]
     public IEnumerable<MachineBanknoteDto> Banknotes { get; set; }
+
+    /// <summary>
+    ///     Список кофе в заказе
+    /// </summary>
+    [Required]
+    public IEnumerable<OrderCoffeeDto> CoffeeList { get; set; }
 }

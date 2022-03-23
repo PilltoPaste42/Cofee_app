@@ -7,5 +7,4 @@ using CoffeeMachine.Core.Models;
 /// </summary>
 public interface IOrderRepository : IBaseRepository<Order>
 {
-   
 }
